@@ -50,3 +50,7 @@
 # 데모 시연 영상
 
 [원티드 프리온보딩 fe 사전과제(todo app)](https://youtu.be/2mFor1PDxzY)
+
+# PR
+
+- [이력서](https://www.notion.so/0d79ee8c2e294c888bc98b909aad4cb1)
