@@ -3,7 +3,7 @@ import { API_ENDPOINT } from "../../../constants/api";
 import ErrorMsg from "./ErrorMsg";
 import { AUTH_TOKEN, EMAIL_VALIDATE_REGEX } from "../../../constants/auth";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { authModeState, isLoggedInState } from "../../../store/auth";
+import { authModeState } from "../../../store/auth";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
 
@@ -15,7 +15,6 @@ interface IAuthForm {
 export default function RegisterForm() {
   const router = useRouter();
   const authMode = useRecoilValue(authModeState);
-  const setIsLoggedIn = useSetRecoilState(isLoggedInState);
   const {
     register,
     handleSubmit,
@@ -42,7 +41,6 @@ export default function RegisterForm() {
         const json = await res.json();
         if (json.token) {
           window.localStorage.setItem(AUTH_TOKEN, json.token);
-          setIsLoggedIn(true);
           router.push("/");
         } else if (json.details) {
           alert(json.details);
@@ -53,7 +51,7 @@ export default function RegisterForm() {
         reset();
       }
     },
-    [authMode, router, reset, setIsLoggedIn]
+    [authMode, router, reset]
   );
 
   return (

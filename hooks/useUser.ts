@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import isLoggedIn from "../utils/isLoggedIn";
+import { isLoggedIn } from "../utils/auth";
 import { AUTH_TOKEN } from "../constants/auth";
 import { useRouter } from "next/router";
 
