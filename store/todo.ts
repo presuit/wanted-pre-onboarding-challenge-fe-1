@@ -8,7 +8,7 @@ export const createTodoModeState = atom<boolean>({
 
 export const todosState = atom<ITodo[]>({ key: "todosState", default: [] });
 
-export const selectedTodoState = atom<ITodo | null>({
-  key: "selectedTodoState",
-  default: null,
+export const editTodoState = atom<boolean>({
+  default: false,
+  key: "editTodoState",
 });

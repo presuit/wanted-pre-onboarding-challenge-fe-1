@@ -2,56 +2,52 @@ import { useForm } from "react-hook-form";
 import { API_ENDPOINT } from "../../../constants/api";
 import ErrorMsg from "./ErrorMsg";
 import { AUTH_TOKEN, EMAIL_VALIDATE_REGEX } from "../../../constants/auth";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import { authModeState } from "../../../store/auth";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { handleRegisterMutation } from "../../../queries/auth";
 
 interface IAuthForm {
   email: string;
   password: string;
 }
 
+interface IRegisterMutationResults {
+  token?: string;
+  details?: string;
+}
+
 export default function RegisterForm() {
   const router = useRouter();
   const authMode = useRecoilValue(authModeState);
+
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm<IAuthForm>({ mode: "onSubmit" });
 
-  const onSubmit = useCallback(
-    async ({ email, password }: IAuthForm) => {
-      const API_URL_SEGMENT =
-        authMode === "SIGN_IN" ? "/users/login" : "/users/create";
-
-      try {
-        const res = await fetch(`${API_ENDPOINT}${API_URL_SEGMENT}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email,
-            password,
-          }),
-        });
-        const json = await res.json();
-        if (json.token) {
-          window.localStorage.setItem(AUTH_TOKEN, json.token);
-          router.push("/");
-        } else if (json.details) {
-          alert(json.details);
-        }
-      } catch (error) {
-        console.log(error);
-      } finally {
-        reset();
+  const mutation = useMutation({
+    onSuccess: (data: IRegisterMutationResults) => {
+      if (data.token) {
+        window.localStorage.setItem(AUTH_TOKEN, data.token);
+        router.push("/");
+      } else if (data.details) {
+        alert(data.details);
       }
     },
-    [authMode, router, reset]
+    mutationFn: handleRegisterMutation,
+  });
+
+  const onSubmit = useCallback(
+    ({ email, password }: IAuthForm) => {
+      const urlSegment =
+        authMode === "SIGN_IN" ? "/users/login" : "/users/create";
+      mutation.mutate({ email, password, url: `${API_ENDPOINT}${urlSegment}` });
+    },
+    [authMode]
   );
 
   return (

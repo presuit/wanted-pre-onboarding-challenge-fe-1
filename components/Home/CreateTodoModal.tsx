@@ -1,8 +1,8 @@
 import { useSetRecoilState } from "recoil";
-import { createTodoModeState, todosState } from "../../store/todo";
+import { createTodoModeState } from "../../store/todo";
 import { useForm } from "react-hook-form";
-import { API_ENDPOINT } from "../../constants/api";
-import useUser from "../../hooks/useUser";
+import useUserToken from "../../hooks/useUserToken";
+import useCreateTodo from "../../hooks/useCreateTodo";
 
 interface IForm {
   title: string;
@@ -10,34 +10,14 @@ interface IForm {
 }
 
 export default function CreateTodoModal() {
-  const userToken = useUser();
+  const userToken = useUserToken();
   const { register, handleSubmit, reset } = useForm<IForm>();
   const setCreateTodoMode = useSetRecoilState(createTodoModeState);
-  const setTodos = useSetRecoilState(todosState);
+  const createTodoMutation = useCreateTodo();
 
-  async function onSubmit({ content, title }: IForm) {
+  function onSubmit({ content, title }: IForm) {
     if (!userToken) return;
-    try {
-      const res = await fetch(`${API_ENDPOINT}/todos`, {
-        method: "POST",
-        headers: {
-          Authorization: userToken,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title,
-          content,
-        }),
-      });
-      const json = await res.json();
-      if (json.data) {
-        alert("successfully create todo!");
-        setTodos((prev) => [json.data, ...prev]);
-        setCreateTodoMode(false);
-      }
-    } catch (error) {
-      console.log(error);
-    }
+    createTodoMutation.mutate({ content, title, userToken });
   }
   function resetCreateTodo() {
     reset();

@@ -8,7 +8,7 @@ interface IProps {
 
 export default function TodoListItem({ data }: IProps) {
   return (
-    <Link href={`/?todoId=${data.id}`} shallow={true}>
+    <Link href={`/?todoId=${data.id}`}>
       <li className="w-full bg-zinc-800 p-3 rounded-md font-bold text-lg flex gap-3 justify-between items-end">
         <span className="block overflow-ellipsis overflow-hidden whitespace-nowrap">
           {data.title}

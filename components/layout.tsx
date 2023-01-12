@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { PropsWithChildren } from "react";
-import useUser from "../hooks/useUser";
+import useUserToken from "../hooks/useUserToken";
 import { AUTH_TOKEN } from "../constants/auth";
 import { useRouter } from "next/router";
 
 export default function Layout({ children }: PropsWithChildren) {
-  const userToken = useUser();
+  const userToken = useUserToken();
   const router = useRouter();
   function handleSignOut() {
     window.localStorage.removeItem(AUTH_TOKEN);
